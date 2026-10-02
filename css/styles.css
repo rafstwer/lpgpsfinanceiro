@@ -326,23 +326,20 @@ p {
   margin: 14px 0 0;
 }
 
-/* Logo */
+/* Logo: a marca do Pilo (o círculo da bússola) já vem com fundo transparente,
+   então entra direto — sem moldura, sem caixa colorida atrás. */
 .logo-mark {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  box-shadow: 0 6px 16px rgba(39, 155, 81, 0.35);
+  width: 36px;
+  height: 36px;
   flex: none;
 }
 
-.logo-mark svg {
-  width: 17px;
-  height: 17px;
-  fill: #fff;
-  transform: rotate(45deg);
+.logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .logo-text {
