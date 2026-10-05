@@ -1,0 +1,109 @@
+/* ===================================================================
+   MOVIMENTO — as animações de rolagem da landing.
+
+   Tudo aqui é dirigido por `js/movimento.js`. A regra que governa o arquivo:
+
+   NADA é escondido a não ser dentro de `.js`, e a classe `js` só é colocada no
+   <html> por esse script. Sem JavaScript — ou com ele bloqueado, ou com
+   movimento reduzido — a página aparece inteira e estática, que é o estado
+   correto. O caminho inverso (esconder no CSS e esperar o JS) transforma uma
+   falha de carregamento em uma página em branco.
+   =================================================================== */
+
+/* --- Entrada por revelação ------------------------------------------- */
+.js [data-anima] > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
+  /* O escalonamento vem do JS (--i por filho), não de nth-child: a lista de
+     filhos muda com o texto e um nth-child quebraria sozinho. */
+  transition-delay: calc(var(--i, 0) * 65ms);
+}
+
+.js [data-anima].entrou > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* O primeiro bloco da página entra sem esperar o observer notar: se dependesse
+   só da interseção, a primeira dobra piscaria na montagem. */
+.js [data-anima].entrou:first-child > * {
+  transition-delay: calc(var(--i, 0) * 65ms);
+}
+
+/* --- Cabeçalho ao rolar ---------------------------------------------- */
+.site-header {
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.site-header.rolado {
+  box-shadow: 0 1px 0 rgba(32, 33, 36, 0.08), 0 6px 20px rgba(32, 33, 36, 0.06);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* --- Barra de leitura ------------------------------------------------ */
+.barra-leitura {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* --- Paralaxe do celular do hero ------------------------------------- */
+/* O deslocamento é aplicado pelo JS em `transform`. O `will-change` fica só
+   aqui, no desktop, onde o efeito existe — em mobile ele é desligado e a
+   propriedade vira gastar memória à toa. */
+@media (min-width: 981px) {
+  .hero-visual {
+    will-change: transform;
+  }
+}
+
+/* --- Movimento reduzido: a página fica completa e parada -------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js [data-anima] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-visual {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .barra-leitura {
+    display: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Foco visível --------------------------------------------------
+   Não havia nenhum. O outline padrão some em alguns navegadores ao clicar, e
+   sem isto a navegação por teclado na landing não tem indicador nenhum. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+a:focus:not(:focus-visible) {
+  outline: none;
+}
